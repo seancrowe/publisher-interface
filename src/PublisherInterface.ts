@@ -32,11 +32,25 @@ interface ChiliWrapper {
   ):
     | Result<string | number | boolean | object | null | undefined>;
 
+  getObjects(
+    chiliPaths: string[]
+  ):
+    | Result<(string | number | boolean | object | null | undefined)[]>;
+
   setProperty(
     chiliPath: string,
     property: string,
     value: string | number | boolean | null
   ): Result<undefined>;
+
+  setProperties(
+    properties: {
+      chiliPath: string,
+      property: string,
+      value: string | number | boolean | null
+    }[]
+  ): Result<undefined>;
+
 
   executeFunction(
     chiliPath: string,
@@ -365,6 +379,16 @@ export class PublisherInterface {
     return response.ok;
   }
 
+  public async getObjects(
+    chiliPaths: string[]
+  ): Promise<(string | number | boolean | object | null | undefined)[]> {
+    const response = await this.child.getObjects(chiliPaths);
+    if (response.isError) {
+      throw new Error(response.error)
+    }
+    return response.ok;
+  }
+
   /**
    * Sets the value of the property defined by property on the object defined by the chiliPath
    *
@@ -382,6 +406,18 @@ export class PublisherInterface {
       throw new Error(response.error)
     }
   }
+
+  public async setProperties(
+    properties: {
+      chiliPath: string,
+      property: string,
+      value: string | number | boolean | null
+    }[]): Promise<void> {
+      const response = await this.child.setProperties(properties);
+      if (response.isError){
+        throw new Error(response.error)
+      }
+    }
 
   /**
    * Executes function of functionName found as a property or method on the object defined in the chiliPath.

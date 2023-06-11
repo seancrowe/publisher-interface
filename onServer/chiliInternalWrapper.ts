@@ -35,7 +35,9 @@ const setUpConnection = () => {
       removeListener,
       addListener,
       setProperty,
+      setProperties,
       getObject,
+      getObjects,
       executeFunction,
       getPageSnapshot,
       getFrameSnapshot,
@@ -161,6 +163,16 @@ const getObject = (
   }
 };
 
+const getObjects = (
+  chiliPaths: string[]
+): Result<string | number | boolean | object | null | undefined[]> => {
+  try {
+    return Ok(chiliPaths.map(cp => window.editorObject.GetObject(cp)));
+  } catch (e) {
+    return Err((e as Error).toString());
+  }
+};
+
 const setProperty = (
   chiliPath: string,
   property: string,
@@ -168,6 +180,20 @@ const setProperty = (
 ): Result<undefined> => {
   try {
     window.editorObject.SetProperty(chiliPath, property, value);
+    return Ok(undefined);
+  } catch (e) {
+    return Err((e as Error).toString());
+  }
+};
+
+const setProperties = (
+  properties: {
+    chiliPath: string,
+    property: string,
+    value: string | number | boolean | null
+  }[]): Result<undefined> => {
+  try {
+    properties.map(({chiliPath, property, value}) => window.editorObject.SetProperty(chiliPath, property, value));
     return Ok(undefined);
   } catch (e) {
     return Err((e as Error).toString());
