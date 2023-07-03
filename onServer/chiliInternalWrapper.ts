@@ -39,6 +39,7 @@ const setUpConnection = () => {
       getObject,
       getObjects,
       executeFunction,
+      executeFunctions,
       getPageSnapshot,
       getFrameSnapshot,
       getFrameSubjectArea,
@@ -187,13 +188,10 @@ const setProperty = (
 };
 
 const setProperties = (
-  properties: {
-    chiliPath: string,
-    property: string,
-    value: string | number | boolean | null
-  }[]): Result<undefined> => {
+  properties: string
+): Result<undefined> => {
   try {
-    properties.map(({chiliPath, property, value}) => window.editorObject.SetProperty(chiliPath, property, value));
+    // properties.map(({chiliPath, property, value}) => window.editorObject.SetProperty(chiliPath, property, value));
     return Ok(undefined);
   } catch (e) {
     return Err((e as Error).toString());
@@ -211,6 +209,23 @@ const executeFunction = (
       functionName,
       ...params
     ));
+  } catch (e) {
+    return Err((e as Error).toString());
+  }
+};
+
+const executeFunctions = (
+  functions: {
+    chiliPath: string,
+    functionName: string,
+    params: (string | number | boolean | null | undefined)[]}[]
+): Result<(string | number | boolean | object | null | undefined)[]> => {
+  try {
+    return Ok(functions.map(({chiliPath, functionName, params}) => window.editorObject.ExecuteFunction(
+      chiliPath,
+      functionName,
+      ...params
+    )));
   } catch (e) {
     return Err((e as Error).toString());
   }

@@ -51,13 +51,19 @@ interface ChiliWrapper {
     }[]
   ): Result<undefined>;
 
-
   executeFunction(
     chiliPath: string,
     functionName: string,
     params: (string | number | boolean | null | undefined)[]
   ):
     | Result<string | number | boolean | object | null | undefined>;
+  
+  executeFunctions(
+    functions: {
+      chiliPath: string,
+      functionName: string,
+      params: (string | number | boolean | null | undefined)[]}[]
+    ): Result<(string | number | boolean | object | null | undefined)[]>;
 
   getPageSnapshot(
     pageIndex: number,
@@ -447,6 +453,19 @@ export class PublisherInterface {
     }
     return response.ok;
   }
+
+  public async executeFunctions(
+    functions: {
+      chiliPath: string,
+      functionName: string,
+      params: (string | number | boolean | null | undefined)[]}[]
+    ): Promise<(string | number | boolean | object | null | undefined)[]> {
+      const response = await this.child.executeFunctions(functions);
+      if (response.isError) {
+        throw new Error(response.error)
+      }
+      return response.ok;
+    }
 
   /**
    * Returns a base64 encoded PNG snapshot image of a specific page.
